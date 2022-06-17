@@ -6,3 +6,23 @@ belonging to the Spring tutorial
 
 Original documentation moved to [TUTORIAL.adoc](./TUTORIAL.adoc).
 
+## Kotlin
+
+I learned some new Kotlin features...
+
+### TODO(reason: String)
+
+This standard Kotlin function always throws a `NotImplementedError`.
+
+```kotlin
+fun post(message: Message) {
+    TODO("Not yet implemented")
+}
+```
+
+### Spring Autowiring at field level
+
+```kotlin
+@Autowired
+lateinit var client: TestRestTemplate
+```
