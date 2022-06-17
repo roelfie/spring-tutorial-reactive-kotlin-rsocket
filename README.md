@@ -26,3 +26,22 @@ fun post(message: Message) {
 @Autowired
 lateinit var client: TestRestTemplate
 ```
+
+## Refactoring to a non-blocking web service implementation with coroutines
+
+The starting point for this refactoring is commit 
+[5f22abba57e27acac8fa3cc141ae0590cfed4645](https://github.com/roelfie/spring-tutorial-reactive-kotlin-rsocket/commit/5f22abba57e27acac8fa3cc141ae0590cfed4645):
+* dependencies:
+  * Spring lib: `spring-boot-starter-data-jdbc` --> `spring-boot-starter-data-r2dbc`.
+  * H2 driver: `com.h2database:h2` --> `io.r2dbc:r2dbc-h2`.
+* Applied `suspend` to all methods (all the way down from `@Controller` / `@RestController` to `MessageRepository`).
+* All tests wrapped in `runBlocking { ... }` coroutine builders.
+* For the `@[Rest]Controller`s it is apparently sufficient to simply `suspend` to its methods. Spring WebFlux 
+  handles it for us.
+
+The use of coroutines has made this implementation non-blocking (retrieving items from the database is no longer 
+blocking the calling thread). 
+
+But notice that this solution does not use reactive streams: The repository and the 
+@RestContoller still return a `List<Message>`.
+
