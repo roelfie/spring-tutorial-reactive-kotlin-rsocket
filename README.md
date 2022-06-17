@@ -30,18 +30,30 @@ lateinit var client: TestRestTemplate
 ## Refactoring to a non-blocking web service implementation with coroutines
 
 The starting point for this refactoring is commit 
-[5f22abba57e27acac8fa3cc141ae0590cfed4645](https://github.com/roelfie/spring-tutorial-reactive-kotlin-rsocket/commit/5f22abba57e27acac8fa3cc141ae0590cfed4645):
-* dependencies:
-  * Spring lib: `spring-boot-starter-data-jdbc` --> `spring-boot-starter-data-r2dbc`.
-  * H2 driver: `com.h2database:h2` --> `io.r2dbc:r2dbc-h2`.
-* Applied `suspend` to all methods (all the way down from `@Controller` / `@RestController` to `MessageRepository`).
-* All tests wrapped in `runBlocking { ... }` coroutine builders.
-* For the `@[Rest]Controller`s it is apparently sufficient to simply `suspend` to its methods. Spring WebFlux 
-  handles it for us.
+[5f22abba57e27acac8fa3cc141ae0590cfed4645](https://github.com/roelfie/spring-tutorial-reactive-kotlin-rsocket/commit/5f22abba57e27acac8fa3cc141ae0590cfed4645).
+
+We have made the following changes to make the web service execute in a non-blocking way:
+
+|                     | blocking                        | non-blocking (coroutines)                                     |
+|---------------------|---------------------------------|---------------------------------------------------------------|
+| spring-data         | `spring-boot-starter-data-jdbc` | `spring-boot-starter-data-r2dbc`                              |
+| H2 driver           | `com.h2database:h2`             | `io.r2dbc:r2dbc-h2`                                           |
+| `suspend`           |                                 | applied `suspend` to all methods                              |
+| `@[Rest]Controller` |                                 | no changes (Spring WebFlux supports `suspend` methods)        |
+| tests               |                                 | all tests wrapped in `runBlocking { ... }` coroutine builders |
 
 The use of coroutines has made this implementation non-blocking (retrieving items from the database is no longer 
 blocking the calling thread). 
 
 But notice that this solution does not use reactive streams: The repository and the 
 @RestContoller still return a `List<Message>`.
+
+## Refactoring to a reactive streaming solution with RSockets
+
+[RSocket](https://rsocket.io/) is a Reactive Streams protocol.
+* [Spring support for RSocket](https://docs.spring.io/spring-framework/docs/current/reference/html/web-reactive.html#rsocket)
+* [Udemy course on RSocket](https://www.udemy.com/course/spring-rsocket/)
+
+
+
 
