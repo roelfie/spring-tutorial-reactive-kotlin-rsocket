@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service
 class PersistentMessageService(val messageRepository: MessageRepository) : MessageService {
 
     // Notice that List has a built-in .map() function in Kotlin
-    override fun latest(): List<MessageVM> =
+    override suspend fun latest(): List<MessageVM> =
         messageRepository.findLatest().mapToViewModel()
 
-    override fun after(lastMessageId: String): List<MessageVM> =
+    override suspend fun after(lastMessageId: String): List<MessageVM> =
         messageRepository.findLatest(lastMessageId).mapToViewModel()
 
-    override fun post(message: MessageVM) {
+    override suspend fun post(message: MessageVM) {
         messageRepository.save(message.toDomainObject())
     }
 }
