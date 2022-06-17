@@ -87,7 +87,7 @@ class ChatKotlinApplicationTests {
 			object : ParameterizedTypeReference<List<MessageVM>>() {}).body
 
 		if (!withLastMessageId) {
-			assertThat(messages?.map { with(it) { copy(id = null, sent = sent.truncatedTo(MILLIS))}})
+			assertThat(messages?.map { it.prepareForTesting() })
 				.first()
 				.isEqualTo(MessageVM(
 					"*testMessage*",
@@ -96,7 +96,7 @@ class ChatKotlinApplicationTests {
 				))
 		}
 
-		assertThat(messages?.map { with(it) { copy(id = null, sent = sent.truncatedTo(MILLIS))}})
+		assertThat(messages?.map { it.prepareForTesting()} )
 			.containsSubsequence(
 				MessageVM(
 					"**testMessage2**",
@@ -126,7 +126,7 @@ class ChatKotlinApplicationTests {
 		messageRepository.findAll()
 			.first { it.content.contains("HelloWorld") }
 			.apply {
-				assertThat(this.copy(id = null, sent = sent.truncatedTo(MILLIS)))
+				assertThat(this.prepareForTesting())
 					.isEqualTo(Message(
 						"`HelloWorld`",
 						ContentType.PLAIN,
@@ -137,3 +137,4 @@ class ChatKotlinApplicationTests {
 			}
 	}
 }
+
